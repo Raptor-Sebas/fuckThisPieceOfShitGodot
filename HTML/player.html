@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mini RPG Game</title>
+    <title>Mini RPG V2</title>
     <link rel="stylesheet" href="../CSS/player.css">
 </head>
 <body>
 
 <div class="container">
 
-    <!-- LEFT SIDE -->
     <div class="left-panel">
 
-        <h2>Mini RPG Game</h2>
-
-        <h3>Create Player</h3>
+        <h2>Mini RPG V2</h2>
 
         <input id="fName" placeholder="First Name">
         <input id="lName" placeholder="Last Name">
@@ -21,17 +18,28 @@
 
         <button id="createPlayerBtn">Create Player</button>
 
-        <h3>Choose Weapon</h3>
+        <h3>Weapons</h3>
         <div id="weaponContainer"></div>
+
+        <h3>Shop</h3>
+        <div id="shop"></div>
+
+        <button onclick="saveGame()">Save Game</button>
+        <button onclick="loadGame()">Load Game</button>
 
     </div>
 
-    <!-- RIGHT SIDE -->
     <div class="right-panel">
 
         <h3>Battle</h3>
 
-        <button id="startFightBtn" disabled>Start Fight</button>
+        <div>Player HP</div>
+        <div id="playerHP"></div>
+
+        <div>Enemy HP</div>
+        <div id="enemyHP"></div>
+
+        <button id="startFightBtn" disabled>Fight</button>
 
         <p id="output"></p>
 

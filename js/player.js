@@ -1,169 +1,214 @@
 class Player {
-    #fName;
-    #lName;
-    #age;
-    #weapon;
-    #hp;
-
     constructor(fName, lName, age) {
-        this.#fName = fName;
-        this.#lName = lName;
-        this.#age = age;
-        this.#weapon = null;
-        this.#hp = 100;
+        this.fName = fName;
+        this.lName = lName;
+        this.age = age;
+
+        this.maxHP = 100;
+        this.hp = 100;
+
+        this.weapon = null;
+
+        this.level = 1;
+        this.xp = 0;
+        this.gold = 0;
     }
 
-    get fullName() {
-        return `${this.#fName} ${this.#lName}`;
+    fullName() {
+        return `${this.fName} ${this.lName}`;
     }
 
-    get weapon() {
-        return this.#weapon;
+    resetHP() {
+        this.hp = this.maxHP;
     }
 
-    setWeapon(weapon) {
-        this.#weapon = weapon;
+    gainXP(amount) {
+        this.xp += amount;
+
+        if (this.xp >= 100) {
+            this.level++;
+            this.xp = 0;
+            this.maxHP += 20;
+            this.hp = this.maxHP;
+            log(`⬆ Level Up! Now Level ${this.level}`);
+        }
     }
 
-    get hp() {
-        return this.#hp;
-    }
-
-    takeDamage(dmg) {
-        this.#hp -= dmg;
+    gainGold(amount) {
+        this.gold += amount;
     }
 }
 
 class Weapon {
-    constructor(name, damage) {
+    constructor(name, damage, cost) {
         this.name = name;
         this.damage = damage;
+        this.cost = cost;
         this.level = 1;
+        this.button = null;
     }
 
     getDamage() {
-        return this.damage;
+        return Math.random() < 0.2 ? this.damage * 2 : this.damage;
     }
 
     upgrade() {
         this.level++;
-        this.damage += 3; // upgrade boost
+        this.damage += 3;
+        this.updateUI();
     }
 
-    toString() {
-        return `${this.name} (Lvl ${this.level}, DMG ${this.damage})`;
+    updateUI() {
+        if (this.button) {
+            this.button.innerText =
+                `${this.name} L${this.level} DMG ${this.damage}`;
+        }
     }
 }
 
-// ----------------------------
-// WEAPONS
-// ----------------------------
+// ---------------- DATA ----------------
 const weapons = [
-    new Weapon("Sword", 10),
-    new Weapon("Lance", 12),
-    new Weapon("Bow", 8),
-    new Weapon("Shield", 2)
+    new Weapon("Sword", 10, 10),
+    new Weapon("Lance", 12, 15),
+    new Weapon("Bow", 8, 8),
+    new Weapon("Shield", 2, 5)
 ];
 
-const enemy = {
-    name: "Goblin",
-    hp: 60,
-    damage: 8
-};
+let player;
+let enemy;
 
-let player = null;
-
-// ----------------------------
-// UI
-// ----------------------------
+// ---------------- UI ----------------
 const output = document.getElementById("output");
 const startBtn = document.getElementById("startFightBtn");
 
-// ----------------------------
-// CREATE PLAYER
-// ----------------------------
-document.getElementById("createPlayerBtn").addEventListener("click", () => {
-    const fName = document.getElementById("fName").value;
-    const lName = document.getElementById("lName").value;
-    const age = document.getElementById("age").value;
+// ---------------- ENEMY ----------------
+function createEnemy() {
+    return {
+        name: "Goblin",
+        hp: 60 + Math.random() * 40,
+        damage: 5 + Math.random() * 5,
+        reward: 20
+    };
+}
 
-    player = new Player(fName, lName, age);
-
-    output.innerText = `Welcome ${player.fullName}! Choose your weapon.`;
+// ---------------- PLAYER ----------------
+document.getElementById("createPlayerBtn").onclick = () => {
+    player = new Player(
+        fName.value,
+        lName.value,
+        age.value
+    );
 
     renderWeapons();
-});
+    renderShop();
 
-// ----------------------------
-// WEAPON SELECTION
-// ----------------------------
+    log("Player Created!");
+};
+
+// ---------------- WEAPONS ----------------
 function renderWeapons() {
     const container = document.getElementById("weaponContainer");
     container.innerHTML = "";
 
-    weapons.forEach((weapon) => {
+    weapons.forEach(w => {
         const btn = document.createElement("button");
-        btn.innerText = weapon.toString();
 
-        btn.addEventListener("click", () => {
-            player.setWeapon(weapon);
+        btn.innerText = `${w.name} DMG ${w.damage}`;
+        w.button = btn;
 
-            output.innerText =
-                `${player.fullName} equipped ${weapon.name}!`;
-
+        btn.onclick = () => {
+            player.weapon = w;
             startBtn.disabled = false;
-        });
+            log(`Equipped ${w.name}`);
+        };
 
         container.appendChild(btn);
     });
 }
 
-// ----------------------------
-// BATTLE
-// ----------------------------
-startBtn.addEventListener("click", () => {
-    startBattle();
-});
+// ---------------- SHOP ----------------
+function renderShop() {
+    const shop = document.getElementById("shop");
+    shop.innerHTML = "";
 
-function startBattle() {
-    let enemyHp = enemy.hp;
-    let playerHp = player.hp;
+    weapons.forEach(w => {
+        const btn = document.createElement("button");
+        btn.innerText = `Upgrade ${w.name} (${w.cost}g)`;
 
-    output.innerText = "Battle started!\n\n";
+        btn.onclick = () => {
+            if (player.gold >= w.cost) {
+                player.gold -= w.cost;
+                w.upgrade();
+                log(`${w.name} upgraded!`);
+            } else {
+                log("Not enough gold!");
+            }
+        };
 
-    while (enemyHp > 0 && playerHp > 0) {
-        enemyHp -= player.weapon.getDamage();
-        output.innerText += `You hit ${enemy.name} for ${player.weapon.getDamage()} dmg. Enemy HP: ${enemyHp}\n`;
-
-        if (enemyHp <= 0) break;
-
-        playerHp -= enemy.damage;
-        output.innerText += `${enemy.name} hits you for ${enemy.damage}. Your HP: ${playerHp}\n`;
-    }
-
-    if (playerHp > 0) {
-        output.innerText += "\n🎉 You won!\n";
-
-        // 🔥 upgrade option
-        setTimeout(() => {
-            offerUpgrade();
-        }, 500);
-    } else {
-        output.innerText += "\n💀 You lost...";
-    }
+        shop.appendChild(btn);
+    });
 }
 
-// ----------------------------
-// UPGRADE SYSTEM
-// ----------------------------
-function offerUpgrade() {
-    const choice = confirm("Upgrade your weapon? (+3 DMG)");
+// ---------------- BATTLE ----------------
+startBtn.onclick = () => {
+    if (!player.weapon) return;
 
-    if (choice) {
-        player.weapon.upgrade();
+    enemy = createEnemy();
+    player.resetHP();
 
-        output.innerText += `\n⚔ Weapon upgraded! Now: ${player.weapon.toString()}`;
-    } else {
-        output.innerText += `\nYou kept your weapon as is.`;
+    updateBars();
+
+    log(`Enemy ${enemy.name} appears!`);
+
+    while (enemy.hp > 0 && player.hp > 0) {
+
+        let dmg = player.weapon.getDamage();
+        enemy.hp -= dmg;
+
+        log(`You hit ${dmg}`);
+
+        if (enemy.hp <= 0) break;
+
+        player.hp -= enemy.damage;
+        log(`Enemy hits ${enemy.damage}`);
+
+        updateBars();
     }
+
+    if (player.hp > 0) {
+        log("Victory!");
+        player.gainXP(50);
+        player.gainGold(enemy.reward);
+    } else {
+        log("You died...");
+    }
+
+    updateBars();
+};
+
+// ---------------- UI ----------------
+function updateBars() {
+    document.getElementById("playerHP").innerText =
+        `${player.hp} / ${player.maxHP}`;
+
+    document.getElementById("enemyHP").innerText =
+        enemy ? enemy.hp.toFixed(0) : "-";
+}
+
+function log(text) {
+    output.innerText += text + "\n";
+}
+
+// ---------------- SAVE / LOAD ----------------
+function saveGame() {
+    localStorage.setItem("rpgSave", JSON.stringify(player));
+    log("Game saved!");
+}
+
+function loadGame() {
+    let data = JSON.parse(localStorage.getItem("rpgSave"));
+    if (!data) return;
+
+    player = Object.assign(new Player(), data);
+    log("Game loaded!");
 }
