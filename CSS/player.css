@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #e2e8f0;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* MAIN LAYOUT */
+.container {
+    width: 900px;
+    display: flex;
+    gap: 20px;
+}
+
+/* LEFT SIDE = setup (horizontal blocks inside) */
+.left-panel {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+}
+
+/* RIGHT SIDE = battle (vertical) */
+.right-panel {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* FORM LAYOUT (horizontal inputs) */
+.form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+}
+
+/* BUTTONS */
+button {
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #3b82f6;
+    color: white;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background: #2563eb;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* WEAPONS LIST */
+#weaponContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#weaponContainer button {
+    background: #10b981;
+}
+
+#weaponContainer button:hover {
+    background: #059669;
+}
+
+/* OUTPUT (battle log) */
+#output {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    flex: 1;
+    white-space: pre-line;
+    overflow-y: auto;
+}
+
+/* HEADERS */
+h2, h3 {
+    margin-top: 0;
+    text-align: center;
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini RPG Game</title>
+    <link rel="stylesheet" href="../CSS/player.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LEFT SIDE -->
+    <div class="left-panel">
+
+        <h2>Mini RPG Game</h2>
+
+        <h3>Create Player</h3>
+
+        <input id="fName" placeholder="First Name">
+        <input id="lName" placeholder="Last Name">
+        <input id="age" type="number" placeholder="Age">
+
+        <button id="createPlayerBtn">Create Player</button>
+
+        <h3>Choose Weapon</h3>
+        <div id="weaponContainer"></div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right-panel">
+
+        <h3>Battle</h3>
+
+        <button id="startFightBtn" disabled>Start Fight</button>
+
+        <p id="output"></p>
+
+    </div>
+
+</div>
+
+<script src="../js/player.js"></script>
+
+</body>
+</html>
